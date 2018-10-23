@@ -15,12 +15,6 @@ public interface Container {
     public Set<Body> getWallCollision(Body body);
 
     /**
-     * The bodies that represent opening edges
-     * @return A set with the bodies
-     */
-    public Set<Body> getOpeningBodies();
-
-    /**
      * The width of the container at
      * the specified depth
      * @param depth

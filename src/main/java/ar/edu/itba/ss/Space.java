@@ -12,6 +12,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class Space {
 
@@ -38,9 +39,6 @@ public class Space {
         // Create bodies set
         this.bodies = new HashSet<>();
 
-        // Insert opening edge bodies into set
-        this.bodies.addAll(this.container.getOpeningBodies());
-
         // Insert bodies
         insertBodies(particleQuantity);
 
@@ -63,6 +61,8 @@ public class Space {
 
         List<Callable<Object>> tasks = new ArrayList<>(bodies.size());
 
+        bodies = bodies.stream().filter(body ->  body.getPositionX() < container.getWidth()).collect(Collectors.toSet());
+
         for(Body body : bodies) {
             tasks.add((() -> {
                 singularSimulationStep(body, dt);
@@ -84,6 +84,7 @@ public class Space {
     }
 
     private void singularSimulationStep(Body body, Double dt) {
+
         // Set dt on particle
         body.setDtBetweenStates(dt);//
 
@@ -98,22 +99,16 @@ public class Space {
       appliedForces.add(new Desired(body,container));
         // Check collisions against neighbours
         for(Body neighbour : bodies) {
-            if(neighbour.equals(body)){
-                break;
+            if(!neighbour.equals(body)){
+                appliedForces.add(new ParticlesInteraccion(body,neighbour));
             }
-            // Check if touching
-            if(body.touches(neighbour)) {
-             appliedForces.add(new Granular(body, neighbour));
-
-            }
-         appliedForces.add(new Social(body, neighbour));
         }
 
         // Check collisions against walls
         Set<Body> wallCollisions = container.getWallCollision(body);
         if(wallCollisions.size() > 0) {
             wallCollisions.parallelStream()
-                    .map(wallBody -> new Granular(body, wallBody))
+                    .map(wallBody -> new WallInteraction(body, wallBody))
                     .forEach(appliedForces::add);
         }
 
@@ -131,12 +126,12 @@ public class Space {
         Integer currentQuantity = 0;
         while(currentQuantity < quantity) {
             double angle = rand.nextDouble()*2*Math.PI;
-            double vModule = (rand.nextDouble()*0.08+6)/2.0;
+            double vModule = rand.nextDouble()*5.92+0.08;
             Body newBody = new Body(
-                    new Vector(rand.nextDouble() * (container.getWidth(0.0) - 2 * 0.25) + 0.25, rand.nextDouble() * (container.getHeight() - 2 * 0.25) + 0.25),
+                    new Vector(rand.nextDouble() * (container.getWidth(0.0) - 2 * 0.29) + 0.29, rand.nextDouble() * (container.getHeight() - 2 * 0.29) + 0.29),
                     new Vector(Math.cos(angle)*vModule, Math.sin(angle)*vModule),
                 80.0,
-                (rand.nextDouble()*0.25+0.29)
+                (rand.nextDouble()*0.04+0.25)
             );
             // Check that newBody doesn't touch any other body
             if(bodies.stream().noneMatch(newBody::touches)) {

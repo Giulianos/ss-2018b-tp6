@@ -3,12 +3,23 @@ package ar.edu.itba.ss.Forces;
 import ar.edu.itba.ss.Particles.Body;
 import ar.edu.itba.ss.Vector;
 
-public class Granular extends ForceBetweenParticles {
+public class ParticlesInteraccion implements Force {
 
-    public Granular(Body b1, Body b2) {
-        super(b1, b2);
+    protected static Double kn = 1.2e5;
+    protected static Double kt = 2*kn;
+
+    private static Double A = 2000.0;
+    private static Double B = 0.08;
+
+    protected Body b1;
+    protected Body b2;
+
+    protected Vector force;
+
+    public ParticlesInteraccion(Body b1, Body b2) {
+        this.b1 = b1;
+        this.b2 = b2;
     }
-
     @Override
     public void evaluate() {
         // Relative velocity
@@ -28,10 +39,14 @@ public class Granular extends ForceBetweenParticles {
         // Geometric variables
         Double epsilon = b1.getRadius() + b2.getRadius()-relativeDistance.module();
 
-        if(epsilon < 0){
-            force = new Vector(0.0,0.0);
-            return;
-        }
-        force = en.multiplyBy(epsilon * kn).add(et.multiplyBy(vt * epsilon * kt));
+
+        force = en.multiplyBy(A*Math.exp(epsilon/B) + kn*(epsilon > 0? epsilon: 0)).add(
+                et.multiplyBy(vt*kt*(epsilon > 0? epsilon: 0)));
+
+    }
+
+    @Override
+    public Vector getForce() {
+        return force;
     }
 }

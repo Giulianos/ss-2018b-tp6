@@ -11,7 +11,6 @@ public class Box implements Container {
     private Double height;
     private Double width;
     private Double openingDiameter;
-    private Set<Body> openingEdgeBodies;
 
     // Opening coordinate
     private Vector openingCoordinades;
@@ -21,25 +20,24 @@ public class Box implements Container {
         this.width = width;
         this.openingDiameter = openingDiameter;
 
-        openingCoordinades = new Vector(width/2-openingDiameter/2,width/2+openingDiameter/2);
-
-        this.openingEdgeBodies = new HashSet<>();
+        openingCoordinades = new Vector(height/2-openingDiameter/2,height/2+openingDiameter/2);
 
     }
 
     private Double wallCollisionPositionVertical(Body body) {
+        Double x = body.getPositionX();
         Double r = body.getRadius();
+        Double y = body.getPositionY();
 
-        if(body.getPosition().getX()-r > openingCoordinades.getX() && body.getPosition().getX()+r < openingCoordinades.getY()) {
-            return null;
-        }
-
-        if(body.getPosition().getX()-r <= 0.0) {
+        if(x - r < 0){
             return 0.0;
-        } else if (body.getPosition().getX()+r >= width) {
+        }else if(x + r >= width){
+            double aux = y-r;
+            if(aux >= openingCoordinades.getX() && aux<= openingCoordinades.getY()){
+                return null;
+            }
             return width;
         }
-
         return null;
     }
 
@@ -49,16 +47,13 @@ public class Box implements Container {
      * @return the y coordinate of the collision
      */
     private Double wallCollisionPositionHorizontal(Body body) {
-        Double x = body.getPositionX();
         Double y = body.getPositionY();
         Double r = body.getRadius();
 
-        if(x-r > openingCoordinades.getX() && x+r < openingCoordinades.getY()) {
-            return null;
-        }
-
-        if(y-r <= 0.0) {
+        if(y-r <= 0){
             return 0.0;
+        }else if( y+r >= height){
+            return height;
         }
         return null;
     }
@@ -81,12 +76,6 @@ public class Box implements Container {
 
         return bodies;
     }
-
-    @Override
-    public Set<Body> getOpeningBodies() {
-        return openingEdgeBodies;
-    }
-
     @Override
     public Double getWidth(Double depth) {
         return this.width;
