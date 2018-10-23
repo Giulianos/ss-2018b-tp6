@@ -54,7 +54,7 @@ public class Main {
         String myLine;
         int i = 0;
 
-        dt = 0.0001;
+        dt = 0.00001;
 
         while ( (myLine = bufRead.readLine()) != null)
         {

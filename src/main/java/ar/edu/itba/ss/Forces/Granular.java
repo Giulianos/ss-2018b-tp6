@@ -1,6 +1,7 @@
 package ar.edu.itba.ss.Forces;
 
 import ar.edu.itba.ss.Particles.Body;
+import ar.edu.itba.ss.Vector;
 
 public class Granular extends ForceBetweenParticles {
 
@@ -11,34 +12,26 @@ public class Granular extends ForceBetweenParticles {
     @Override
     public void evaluate() {
         // Relative velocity
-        Double vx = b1.getVelocityX() - b2.getVelocityX();
-        Double vy = b1.getVelocityY() - b2.getVelocityY();
+        Vector relativeVelocity = b2.getVelocity().subtract(b1.getVelocity());
 
         // Distance distance
-        Double rx = b1.getPositionX() - b2.getPositionX();
-        Double ry = b1.getPositionY() - b2.getPositionY();
-        Double rmod = Math.sqrt(rx*rx + ry*ry);
+        Vector relativeDistance = b1.getPosition().subtract(b2.getPosition());
 
         // Calculate normal direction
-        Double enX = rx/rmod;
-        Double enY = ry/rmod;
+        Vector en = relativeDistance.divideBy(relativeDistance.module());
 
         // Calculate tangential direction
-        Double etX = -enY;
-        Double etY = enX;
+        Vector et = new Vector(-en.getY(),en.getX());
 
-        Double relativeVelocity = vx*etX + vy*etY;
+        double vt = relativeVelocity.dot(et);
 
         // Geometric variables
-        Double epsilon = -b1.getRadius() - b2.getRadius() + rmod;
+        Double epsilon = b1.getRadius() + b2.getRadius()-relativeDistance.module();
 
         if(epsilon < 0){
-            x = 0.0;
-            y = 0.0;
+            force = new Vector(0.0,0.0);
             return;
         }
-
-        x = (-epsilon*kn*enX + relativeVelocity*epsilon*kt*etX)*epsilon;
-        y = (-epsilon*kn*enY + relativeVelocity*epsilon*kt*etY)*epsilon;
+        force = en.multiplyBy(epsilon * kn).add(et.multiplyBy(vt * epsilon * kt));
     }
 }

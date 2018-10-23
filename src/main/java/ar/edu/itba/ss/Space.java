@@ -1,6 +1,4 @@
 package ar.edu.itba.ss;
-
-import ar.edu.itba.ss.CellIndex.Grid;
 import ar.edu.itba.ss.Container.Box;
 import ar.edu.itba.ss.Container.Container;
 import ar.edu.itba.ss.Forces.*;
@@ -25,7 +23,6 @@ public class Space {
     // Utilities
     private Integrator integrator;
     private List<SpaceObserver> observers = new ArrayList<>();
-    private Grid<Body> grid;
 
     // Space properties
     private Integer translatedParticles = 0;
@@ -47,12 +44,6 @@ public class Space {
         // Insert bodies
         insertBodies(particleQuantity);
 
-        // Create Grid
-        this.grid = new Grid<>(0.03);
-
-        // Add particles to grid
-        this.grid.injectElements(bodies);
-
         // Create integrator
         this.integrator = new Beeman();
 
@@ -72,9 +63,6 @@ public class Space {
 
         List<Callable<Object>> tasks = new ArrayList<>(bodies.size());
 
-        // Update grid before simulating
-        this.grid.updateGrid();
-
         for(Body body : bodies) {
             tasks.add((() -> {
                 singularSimulationStep(body, dt);
@@ -93,8 +81,6 @@ public class Space {
         for(SpaceObserver observer : observers) {
             observer.injectData(bodies, container, elapsedTime, translatedParticles);
         }
-
-        // System.out.println("Time taken for 1 step: " + (System.currentTimeMillis()-startTime) + "ms");
     }
 
     private void singularSimulationStep(Body body, Double dt) {
@@ -109,24 +95,27 @@ public class Space {
         Set<Force> appliedForces = new HashSet<>();
 
         // Add desired force
- //       appliedForces.add(new Desired(body,container));
-
+      appliedForces.add(new Desired(body,container));
         // Check collisions against neighbours
-        for(Body neighbour : grid.getNeighbours(body)) {
+        for(Body neighbour : bodies) {
+            if(neighbour.equals(body)){
+                break;
+            }
             // Check if touching
             if(body.touches(neighbour)) {
-                appliedForces.add(new Granular(body, neighbour));
-                appliedForces.add(new Social(body, neighbour));
+             appliedForces.add(new Granular(body, neighbour));
+
             }
+         appliedForces.add(new Social(body, neighbour));
         }
 
         // Check collisions against walls
-        /*Set<Body> wallCollisions = container.getWallCollision(body);
+        Set<Body> wallCollisions = container.getWallCollision(body);
         if(wallCollisions.size() > 0) {
             wallCollisions.parallelStream()
                     .map(wallBody -> new Granular(body, wallBody))
                     .forEach(appliedForces::add);
-        }*/
+        }
 
         // Sum forces
         Force appliedForce = new SumForce(appliedForces);
@@ -144,12 +133,10 @@ public class Space {
             double angle = rand.nextDouble()*2*Math.PI;
             double vModule = (rand.nextDouble()*0.08+6)/2.0;
             Body newBody = new Body(
-                    rand.nextDouble() * (container.getWidth(0.0) - 2 * 0.25) + 0.25,
-                    rand.nextDouble() * (container.getHeight() - 2 * 0.25) + 0.25,
-                    Math.cos(angle)*vModule,
-                    Math.sin(angle)*vModule,
+                    new Vector(rand.nextDouble() * (container.getWidth(0.0) - 2 * 0.25) + 0.25, rand.nextDouble() * (container.getHeight() - 2 * 0.25) + 0.25),
+                    new Vector(Math.cos(angle)*vModule, Math.sin(angle)*vModule),
                 80.0,
-                (rand.nextDouble()*0.25+0.29)/2.0
+                (rand.nextDouble()*0.25+0.29)
             );
             // Check that newBody doesn't touch any other body
             if(bodies.stream().noneMatch(newBody::touches)) {

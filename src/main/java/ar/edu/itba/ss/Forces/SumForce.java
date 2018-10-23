@@ -1,12 +1,13 @@
 package ar.edu.itba.ss.Forces;
 
+import ar.edu.itba.ss.Vector;
+
 import java.util.Set;
 
 public class SumForce implements Force {
     private Set<Force> forces;
 
-    private Double x;
-    private Double y;
+    private Vector force;
 
     public SumForce(Set<Force> forces) {
         this.forces = forces;
@@ -14,31 +15,16 @@ public class SumForce implements Force {
 
     @Override
     public void evaluate() {
-        x = 0d;
-        y = 0d;
+        force = new Vector(0.0,0.0);
         for(Force f : forces) {
             f.evaluate();
-            x += f.getX();
-            y += f.getY();
+            force = force.add(f.getForce());
         }
     }
 
     @Override
-    public Double getX() {
-        return x;
+    public Vector getForce() {
+        return this.force;
     }
 
-    @Override
-    public Double getY() {
-        return y;
-    }
-
-    @Override
-    public Double getModule() {
-        Double module = 0.0;
-        for(Force force: forces){
-            module += force.getModule();
-        }
-        return module;
-    }
 }

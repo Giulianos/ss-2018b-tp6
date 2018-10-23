@@ -1,6 +1,8 @@
 package ar.edu.itba.ss.Forces;
 
 import ar.edu.itba.ss.Particles.Body;
+import ar.edu.itba.ss.Vector;
+import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 public class Social extends ForceBetweenParticles {
 
@@ -14,31 +16,17 @@ public class Social extends ForceBetweenParticles {
 
     @Override
     public void evaluate() {
-        // Relative velocity
-        Double vx = b1.getVelocityX() - b2.getVelocityX();
-        Double vy = b1.getVelocityY() - b2.getVelocityY();
 
         // Distance distance
-        Double rx = b1.getPositionX() - b2.getPositionX();
-        Double ry = b1.getPositionY() - b2.getPositionY();
-        Double rmod = Math.sqrt(rx*rx + ry*ry);
+        Vector relativeDistance = b1.getPosition().subtract(b2.getPosition());
 
         // Calculate normal direction
-        Double enX = rx/rmod;
-        Double enY = ry/rmod;
+        Vector en = relativeDistance.divideBy(relativeDistance.module());
 
         // Geometric variables
-        Double epsilon = -b1.getRadius() - b2.getRadius() + rmod;
+        Double epsilon = (b1.getRadius() + b2.getRadius())-relativeDistance.module();
 
-//        if(epsilon < 0){
-//            x = 0.0;
-//            y = 0.0;
-//            return;
-//        }
+        force = en.multiplyBy(A * Math.exp(epsilon/B));
 
-        Double fModule = A * Math.exp(-epsilon/B);
-
-        x = fModule * enX;
-        y = fModule * enY;
     }
 }

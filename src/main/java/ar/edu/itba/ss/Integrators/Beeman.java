@@ -2,6 +2,7 @@ package ar.edu.itba.ss.Integrators;
 
 import ar.edu.itba.ss.Forces.Force;
 import ar.edu.itba.ss.Particles.Body;
+import ar.edu.itba.ss.Vector;
 
 public class Beeman implements Integrator {
 
@@ -13,34 +14,23 @@ public class Beeman implements Integrator {
 
         f.evaluate();
 
-        Double x = b.getPositionX();
-        Double y = b.getPositionY();
+        Vector currentPosition = b.getPosition();
 
-        Double vx = b.getVelocityX();
-        Double vy = b.getVelocityY();
+        Vector currentVelocity = b.getVelocity();
 
-        Double ax = b.getAccelerationX();
-        Double ay = b.getAccelerationY();
+        Vector currentAcceleration = b.getAcceleration();
 
-        Double axP = b.getPreviousAccelerationX();
-        Double ayP = b.getPreviousAccelerationY();
+        Vector previusAcceleration = b.getPreviousAcceleration();
 
-        Double axF = f.getX()/b.getMass();
-        Double ayF = f.getY()/b.getMass();
+        Vector futureAcceleration = f.getForce().divideBy(b.getMass());
 
-        Double xF = x + vx*dt + (2.0/3.0)*ax*dt*dt - (1.0/6.0)*axP*dt*dt;
-        Double yF = y + vy*dt + (2.0/3.0)*ay*dt*dt - (1.0/6.0)*ayP*dt*dt;
+        Vector futurePosition = currentPosition.add(currentVelocity.multiplyBy(dt)).add(currentAcceleration.multiplyBy(dt*dt*(2.0/3.0))).subtract(previusAcceleration.multiplyBy(dt*dt*(1.0/6.0)));
 
-        Double vxF = vx + (1.0/3.0)*axF*dt + (5.0/6.0)*ax*dt - (1.0/6.0)*axP*dt;
-        Double vyF = vy + (1.0/3.0)*ayF*dt + (5.0/6.0)*ay*dt - (1.0/6.0)*ayP*dt;
+       Vector futureVelocity = currentVelocity.add(futureAcceleration.multiplyBy(dt*(1.0/3.0))).add(currentAcceleration.multiplyBy(dt*(5.0/6.0))).subtract(previusAcceleration.multiplyBy(dt*(1.0/6.0)));
 
-        b.setPositionX(xF);
-        b.setVelocityX(vxF);
-        b.setAccelerationX(axF);
-
-        b.setPositionY(yF);
-        b.setVelocityY(vyF);
-        b.setAccelerationY(ayF);
+       b.setFuturePosition(futurePosition);
+       b.setFutureVelocity(futureVelocity);
+       b.setFutureAcceleration(futureAcceleration);
     }
 
     public String toString(){

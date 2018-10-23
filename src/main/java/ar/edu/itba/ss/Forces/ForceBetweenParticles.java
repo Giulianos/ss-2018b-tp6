@@ -1,6 +1,7 @@
 package ar.edu.itba.ss.Forces;
 
 import ar.edu.itba.ss.Particles.Body;
+import ar.edu.itba.ss.Vector;
 
 public abstract class ForceBetweenParticles implements Force {
 
@@ -10,8 +11,7 @@ public abstract class ForceBetweenParticles implements Force {
     protected Body b1;
     protected Body b2;
 
-    protected Double x;
-    protected Double y;
+    protected Vector force;
 
     public ForceBetweenParticles(Body b1, Body b2) {
         this.b1 = b1;
@@ -22,17 +22,8 @@ public abstract class ForceBetweenParticles implements Force {
     public abstract void evaluate();
 
     @Override
-    public Double getX() {
-        return x;
+    public Vector getForce() {
+        return this.force;
     }
 
-    @Override
-    public Double getY() {
-        return y;
-    }
-
-    @Override
-    public Double getModule() {
-        return Math.sqrt(x*x + y*y);
-    }
 }

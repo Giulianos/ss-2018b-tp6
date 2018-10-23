@@ -2,6 +2,7 @@ package ar.edu.itba.ss.Forces;
 
 import ar.edu.itba.ss.Container.Container;
 import ar.edu.itba.ss.Particles.Body;
+import ar.edu.itba.ss.Vector;
 
 public class Desired implements Force{
 
@@ -9,8 +10,7 @@ public class Desired implements Force{
     private static Double vDesired = 6.0;
     private static Container container;
 
-    private Double x;
-    private Double y;
+    private Vector force;
 
     private Body b;
 
@@ -22,58 +22,43 @@ public class Desired implements Force{
     @Override
     public void evaluate() {
         // Relative distance
-        Double rx = calculateTargetX() - b.getPositionX();
-        Double ry = calculateTargetY() - b.getPositionY();
-
-        Double rmod = Math.sqrt(rx*rx + ry*ry);
+        Vector relativeDistance = calculateTarget().subtract(b.getPosition());
 
         // Calculate normal direction
-        Double enX = rx/rmod;
-        Double enY = ry/rmod;
+        Vector en = relativeDistance.divideBy(relativeDistance.module());
 
-        x = b.getMass()*(vDesired*enX-b.getVelocityX())/t;
-        y = b.getMass()*(vDesired*enY-b.getVelocityY())/t;
+        // Calculate force
+        force = en.multiplyBy(vDesired).subtract(b.getVelocity()).multiplyBy(b.getMass()).divideBy(t);
     }
 
     @Override
-    public Double getX() {
-        return x;
+    public Vector getForce() {
+        return this.force;
     }
 
-    @Override
-    public Double getY() {
-        return y;
-    }
 
-    @Override
-    public Double getModule() {
-        return Math.sqrt(x*x + y*y);
-    }
-
-    private Double calculateTargetX(){
+    private Vector calculateTarget(){
         Double efectiveDiameter = container.getDiameter() - 2*b.getRadius();
         Double y2 = container.getHeight()/2 - efectiveDiameter/2;
         Double y1 = container.getHeight()/2 + efectiveDiameter/2;
+        Double x;
+        Double y;
 
-        if (b.getPositionY() < y2 || b.getPositionY() > y1) {
-            return container.getWidth();
+        if (b.getPosition().getY() < y2 || b.getPosition().getY() > y1) {
+            x = container.getWidth();
         } else {
             // Final target is 10% the width of the room
-            return container.getWidth() + 0.1*container.getWidth();
+            x = container.getWidth() + 0.1*container.getWidth();
         }
-    }
 
-    private Double calculateTargetY(){
-        Double efectiveDiameter = container.getDiameter()- 2*b.getRadius();
-        Double y2 = container.getHeight()/2 - efectiveDiameter/2;
-        Double y1 = container.getHeight()/2 + efectiveDiameter/2;
-
-        if(b.getPositionY() < y2) {
-            return y2;
-        } else if(b.getPositionY() > y1) {
-            return y1;
+        if(b.getPosition().getY() < y2) {
+            y = y2;
+        } else if(b.getPosition().getY() > y1) {
+            y = y1;
         } else {
-            return container.getHeight()/2;
+            y = container.getHeight()/2;
         }
+
+        return new Vector(x,y);
     }
 }

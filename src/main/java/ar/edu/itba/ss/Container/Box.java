@@ -2,6 +2,7 @@ package ar.edu.itba.ss.Container;
 
 import ar.edu.itba.ss.Particles.Body;
 import ar.edu.itba.ss.Particles.FixedBody;
+import ar.edu.itba.ss.Vector;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,38 +14,29 @@ public class Box implements Container {
     private Set<Body> openingEdgeBodies;
 
     // Opening coordinate
-    private Double x1;
-    private Double x2;
+    private Vector openingCoordinades;
 
     public Box(Double openingDiameter, Double height, Double width) {
         this.height = height;
         this.width = width;
         this.openingDiameter = openingDiameter;
 
-        x1 = width/2-openingDiameter/2;
-        x2 = width/2+openingDiameter/2;
+        openingCoordinades = new Vector(width/2-openingDiameter/2,width/2+openingDiameter/2);
 
         this.openingEdgeBodies = new HashSet<>();
-        /*this.openingEdgeBodies.add(
-                new FixedBody(x1,0.0,0.0,0.0, Double.MAX_VALUE,0.0)
-        );*/
-        /*this.openingEdgeBodies.add(
-                new FixedBody(x2,0.0,0.0,0.0, Double.MAX_VALUE,0.0)
-        );*/
+
     }
 
     private Double wallCollisionPositionVertical(Body body) {
-        Double x = body.getPositionX();
-        Double y = body.getPositionY();
         Double r = body.getRadius();
 
-        if(x-r > x1 && x+r < x2) {
+        if(body.getPosition().getX()-r > openingCoordinades.getX() && body.getPosition().getX()+r < openingCoordinades.getY()) {
             return null;
         }
 
-        if(x-r <= 0.0) {
+        if(body.getPosition().getX()-r <= 0.0) {
             return 0.0;
-        } else if (x+r >= width) {
+        } else if (body.getPosition().getX()+r >= width) {
             return width;
         }
 
@@ -61,7 +53,7 @@ public class Box implements Container {
         Double y = body.getPositionY();
         Double r = body.getRadius();
 
-        if(x-r > x1 && x+r < x2) {
+        if(x-r > openingCoordinades.getX() && x+r < openingCoordinades.getY()) {
             return null;
         }
 
@@ -78,13 +70,13 @@ public class Box implements Container {
         // Check if there is a collision against a vertical wall
         Double position = wallCollisionPositionVertical(body);
         if(position != null) {
-            bodies.add(new FixedBody(position, body.getPositionY(), 0.0, 0.0, 0.0, 0.0));
+            bodies.add(new FixedBody(new Vector(position, body.getPositionY()),new Vector( 0.0, 0.0), 0.0, 0.0));
         }
 
         // Check if there is a collision against a horizontal wall
         position = wallCollisionPositionHorizontal(body);
         if(position != null) {
-            bodies.add(new FixedBody(body.getPositionX(), position, 0.0, 0.0, 0.0, 0.0));
+            bodies.add(new FixedBody(new Vector(body.getPositionX(), position), new Vector( 0.0, 0.0), 0.0, 0.0));
         }
 
         return bodies;

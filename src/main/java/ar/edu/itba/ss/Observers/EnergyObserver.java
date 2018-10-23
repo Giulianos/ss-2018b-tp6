@@ -73,8 +73,7 @@ public class EnergyObserver implements SpaceObserver {
     }
 
     private Double getEnergy(Body b) {
-        double speedMod = Math.sqrt(b.getVelocityX()*b.getVelocityX() + b.getVelocityY()*b.getVelocityY());
-        return (1.0/2.0)*b.getMass()*Math.pow(speedMod, 2);
+        return (1.0/2.0)*b.getMass()*b.getVelocity().module();
     }
 
     @Override
