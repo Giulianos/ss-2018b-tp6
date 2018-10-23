@@ -1,6 +1,6 @@
 package ar.edu.itba.ss.Observers;
 
-import ar.edu.itba.ss.Containers.Container;
+import ar.edu.itba.ss.Container.Container;
 import ar.edu.itba.ss.Particles.Body;
 
 import java.io.BufferedWriter;

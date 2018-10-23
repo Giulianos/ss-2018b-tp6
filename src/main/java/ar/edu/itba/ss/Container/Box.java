@@ -1,8 +1,7 @@
-package ar.edu.itba.ss.Containers;
+package ar.edu.itba.ss.Container;
 
 import ar.edu.itba.ss.Particles.Body;
 import ar.edu.itba.ss.Particles.FixedBody;
-import ar.edu.itba.ss.Types.WallCollisionType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -102,6 +101,11 @@ public class Box implements Container {
     }
 
     @Override
+    public Double getWidth() {
+        return this.width;
+    }
+
+    @Override
     public Double getHeight() {
         return this.height;
     }
@@ -121,5 +125,10 @@ public class Box implements Container {
         }
 
         return false;
+    }
+
+    @Override
+    public Double getDiameter() {
+        return this.openingDiameter;
     }
 }

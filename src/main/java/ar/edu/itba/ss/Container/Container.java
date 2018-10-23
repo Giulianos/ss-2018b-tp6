@@ -1,4 +1,4 @@
-package ar.edu.itba.ss.Containers;
+package ar.edu.itba.ss.Container;
 
 import ar.edu.itba.ss.Particles.Body;
 
@@ -28,6 +28,8 @@ public interface Container {
      */
     public Double getWidth(Double depth);
 
+    public Double getWidth();
+
     /**
      * The height of the container
      * @return
@@ -40,4 +42,6 @@ public interface Container {
      * @return True if touches a wall, false otherwise
      */
     public Boolean touchesWall(Body b);
+
+    Double getDiameter();
 }

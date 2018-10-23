@@ -1,7 +1,5 @@
 package ar.edu.itba.ss;
 
-import ar.edu.itba.ss.Containers.Box;
-import ar.edu.itba.ss.Containers.Container;
 import ar.edu.itba.ss.Observers.EnergyObserver;
 import ar.edu.itba.ss.Observers.FlowObserver;
 import ar.edu.itba.ss.Observers.OVITOObserver;
@@ -12,7 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Main {
-    private static Double diameter, width, height, friction, minRadius, maxRadius, mass, kn, dt, tf, dtObserver;
+    private static Double diameter, width, height, dt, tf, dtObserver;
     private static int N;
 
     public static void main( String[] args ) throws Exception {
@@ -27,7 +25,7 @@ public class Main {
         Logger.log("Observer created!");
 
         // Create space
-        Space space = new Space(width, height, diameter, N, friction, kn);
+        Space space = new Space(width, height, diameter, N);
         Logger.log("Space created!");
 
         // Attach observer to space
@@ -55,6 +53,9 @@ public class Main {
         BufferedReader bufRead = new BufferedReader(input);
         String myLine;
         int i = 0;
+
+        dt = 0.00001;
+
         while ( (myLine = bufRead.readLine()) != null)
         {
             String[] aux = myLine.toLowerCase().split(" = ");
@@ -62,18 +63,8 @@ public class Main {
                 case "diameter" : diameter = Double.parseDouble(aux[1]); break;
                 case "width" : width = Double.parseDouble(aux[1]); break;
                 case "height" : height = Double.parseDouble(aux[1]); break;
-                case "friction" : friction = Double.parseDouble(aux[1]); break;
-                case "minradius" : minRadius = Double.parseDouble(aux[1]); break;
-                case "maxradius" : maxRadius = Double.parseDouble(aux[1]); break;
                 case "n" : N = Integer.parseInt(aux[1]); break;
-                case "mass" : mass = Double.parseDouble(aux[1]); break;
                 case "dt_observer": dtObserver = Double.parseDouble(aux[1]); break;
-                case "kn" :
-                    kn = Double.parseDouble(aux[1]);
-                    double m = (minRadius+maxRadius)/2;
-                    // dt es el paso de la simulación
-                    dt = 0.00001;
-                    break;
                 case "tf" : tf = Double.parseDouble(aux[1]); break;
                 default:
                     throw new RuntimeException("NOT VALID INPUT IN PARAMS.TXT");
@@ -81,7 +72,7 @@ public class Main {
             i++;
         }
 
-        if(i<10){
+        if(i<6){
             throw new RuntimeException("THERE ARE PARAMETERS MISSING");
         }
     }

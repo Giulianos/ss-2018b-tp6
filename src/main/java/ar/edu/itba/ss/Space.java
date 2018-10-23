@@ -1,8 +1,8 @@
 package ar.edu.itba.ss;
 
 import ar.edu.itba.ss.CellIndex.Grid;
-import ar.edu.itba.ss.Containers.Box;
-import ar.edu.itba.ss.Containers.Container;
+import ar.edu.itba.ss.Container.Box;
+import ar.edu.itba.ss.Container.Container;
 import ar.edu.itba.ss.Forces.*;
 import ar.edu.itba.ss.Integrators.Beeman;
 import ar.edu.itba.ss.Integrators.Integrator;
@@ -33,7 +33,7 @@ public class Space {
     // Concurrency
      ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-    public Space(Double width, Double height, Double diameter, Integer particleQuantity, Double friction, Double kn) {
+    public Space(Double width, Double height, Double diameter, Integer particleQuantity) {
 
         // Create container
         this.container = new Box(diameter, height, width);
@@ -55,10 +55,6 @@ public class Space {
 
         // Create integrator
         this.integrator = new Beeman();
-
-        // Update collision parameters
-        ParticleCollisionForce.setFriction(friction);
-        ParticleCollisionForce.setKn(kn);
 
     }
 
@@ -111,11 +107,16 @@ public class Space {
         }
 
         Set<Force> appliedForces = new HashSet<>();
+
+        // Add desired force
+        appliedForces.add(new Desired(body,container));
+
         // Check collisions against neighbours
-        for(Body neighbour : getNeighbours(body)) {
+        for(Body neighbour : grid.getNeighbours(body)) {
             // Check if touching
             if(body.touches(neighbour)) {
-                appliedForces.add(new ParticleCollisionForce(body, neighbour));
+                appliedForces.add(new Granular(body, neighbour));
+                appliedForces.add(new Social(body, neighbour));
             }
         }
 
@@ -123,12 +124,9 @@ public class Space {
         Set<Body> wallCollisions = container.getWallCollision(body);
         if(wallCollisions.size() > 0) {
             wallCollisions.parallelStream()
-                    .map(wallBody -> new ParticleCollisionForce(body, wallBody))
+                    .map(wallBody -> new Granular(body, wallBody))
                     .forEach(appliedForces::add);
         }
-
-        // Add gravity force
-        appliedForces.add(new GForce(body));
 
         // Sum forces
         Force appliedForce = new SumForce(appliedForces);
@@ -136,17 +134,7 @@ public class Space {
         // Integrate
         integrator.calculate(body, dt, appliedForce);
 
-        // Update periodic
-        updatePeriodic(body);
-
         body.setPressure(appliedForce.getModule()/(2*body.getRadius()*Math.PI));
-    }
-
-    private Set<Body> getNeighbours(Body body) {
-        return grid.getNeighbours(body);
-        // Set<Body> neighbours = new HashSet<>(bodies);
-        // neighbours.remove(body);
-        // return neighbours;
     }
 
     private void insertBodies(Integer quantity) {
@@ -155,14 +143,15 @@ public class Space {
         Random rand = new Random();
         Integer currentQuantity = 0;
         while(currentQuantity < quantity) {
+            double angle = rand.nextDouble()*2*Math.PI;
+            double vModule = (rand.nextDouble()*0.08+6)/2.0;
             Body newBody = new Body(
-  //                  0.3,
-                    rand.nextDouble() * (container.getWidth(0.0) - 2 * 0.015) + 0.015,
-                    rand.nextDouble() * (container.getHeight() - 2 * 0.015) + 0.015,
-                0.0,
-                0.0,
-                0.01,
-                (rand.nextDouble()*0.01+0.02)/2.0
+                    rand.nextDouble() * (container.getWidth(0.0) - 2 * 0.25) + 0.25,
+                    rand.nextDouble() * (container.getHeight() - 2 * 0.25) + 0.25,
+                    Math.cos(angle)*vModule,
+                    Math.sin(angle)*vModule,
+                80.0,
+                (rand.nextDouble()*0.25+0.29)/2.0
             );
             // Check that newBody doesn't touch any other body
             if(bodies.stream().noneMatch(newBody::touches)) {
@@ -170,19 +159,6 @@ public class Space {
                 Logger.log("Particle "+currentQuantity+"/"+quantity+" added!");
                 currentQuantity++;
             }
-        }
-    }
-
-    private void updatePeriodic(Body b) {
-        if(b.isFixed()) {
-            return;
-        }
-        if(b.getPositionY() < container.getHeight()*(-0.1)) {
-            b.setPositionX(new Random().nextDouble() * (container.getWidth(0.0) - 2 * 0.015) + 0.015);
-            b.setPositionY(new Random().nextDouble() * (container.getHeight()*0.2 - 2 * 0.015) + 0.015 + container.getHeight()*0.8);
-            b.shouldResetMovement();
-            translatedParticles++;
-            // Logger.log("Updated body position!");
         }
     }
 
