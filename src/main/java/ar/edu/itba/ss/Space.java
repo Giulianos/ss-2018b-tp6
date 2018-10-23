@@ -121,12 +121,12 @@ public class Space {
         }
 
         // Check collisions against walls
-        Set<Body> wallCollisions = container.getWallCollision(body);
+        /*Set<Body> wallCollisions = container.getWallCollision(body);
         if(wallCollisions.size() > 0) {
             wallCollisions.parallelStream()
                     .map(wallBody -> new Granular(body, wallBody))
                     .forEach(appliedForces::add);
-        }
+        }*/
 
         // Sum forces
         Force appliedForce = new SumForce(appliedForces);

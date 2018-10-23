@@ -34,22 +34,6 @@ public class Beeman implements Integrator {
         Double vxF = vx + (1.0/3.0)*axF*dt + (5.0/6.0)*ax*dt - (1.0/6.0)*axP*dt;
         Double vyF = vy + (1.0/3.0)*ayF*dt + (5.0/6.0)*ay*dt - (1.0/6.0)*ayP*dt;
 
-        Double speedMod = Math.sqrt(vxF*vxF + vxF*vxF);
-        if(speedMod > maxSpeed) {
-            vxF /= speedMod;
-            vyF /= speedMod;
-            vxF *= maxSpeed;
-            vyF *= maxSpeed;
-        }
-
-        Double accelerationMod = Math.sqrt(axF*axF + axF*axF);
-        if(accelerationMod > maxAcceleration) {
-            axF /= accelerationMod;
-            ayF /= accelerationMod;
-            axF *= maxAcceleration;
-            ayF *= maxAcceleration;
-        }
-
         b.setPositionX(xF);
         b.setVelocityX(vxF);
         b.setAccelerationX(axF);

@@ -22,8 +22,8 @@ public class Desired implements Force{
     @Override
     public void evaluate() {
         // Relative distance
-        Double rx = b.getPositionX() - calculateTargetX();
-        Double ry = b.getPositionY() - calculateTargetY();
+        Double rx = calculateTargetX() - b.getPositionX();
+        Double ry = calculateTargetY() - b.getPositionY();
 
         Double rmod = Math.sqrt(rx*rx + ry*ry);
 
