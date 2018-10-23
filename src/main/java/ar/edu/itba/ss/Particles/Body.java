@@ -242,7 +242,7 @@ public class Body implements Locatable {
     }
 
     public String toString(){
-        return currentPositionX +"\t"+currentPositionY + "\t" + this.getRadius() + "\t" + this.pressure;
+        return currentPositionX +"\t"+currentPositionY + "\t" + this.getRadius();
     }
 
     public Boolean isFixed() {

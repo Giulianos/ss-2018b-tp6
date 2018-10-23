@@ -18,10 +18,6 @@ public abstract class ForceBetweenParticles implements Force {
         this.b2 = b2;
     }
 
-    public static void setKn(Double kn) {
-        ForceBetweenParticles.kn = kn;
-    }
-
     @Override
     public abstract void evaluate();
 

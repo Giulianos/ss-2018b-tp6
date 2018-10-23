@@ -28,13 +28,13 @@ public class Social extends ForceBetweenParticles {
         Double enY = ry/rmod;
 
         // Geometric variables
-        Double epsilon = b1.getRadius() + b2.getRadius() - rmod;
+        Double epsilon = -b1.getRadius() - b2.getRadius() + rmod;
 
-        if(epsilon < 0){
-            x = 0.0;
-            y = 0.0;
-            return;
-        }
+//        if(epsilon < 0){
+//            x = 0.0;
+//            y = 0.0;
+//            return;
+//        }
 
         Double fModule = A * Math.exp(-epsilon/B);
 

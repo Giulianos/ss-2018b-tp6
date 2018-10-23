@@ -30,7 +30,7 @@ public class Granular extends ForceBetweenParticles {
         Double relativeVelocity = vx*etX + vy*etY;
 
         // Geometric variables
-        Double epsilon = b1.getRadius() + b2.getRadius() - rmod;
+        Double epsilon = -b1.getRadius() - b2.getRadius() + rmod;
 
         if(epsilon < 0){
             x = 0.0;

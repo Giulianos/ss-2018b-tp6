@@ -6,7 +6,7 @@ import ar.edu.itba.ss.Particles.Body;
 public class Desired implements Force{
 
     private static Double t = 0.5;
-    private static Double vDesired = 2.5;
+    private static Double vDesired = 6.0;
     private static Container container;
 
     private Double x;

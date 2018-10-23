@@ -109,7 +109,7 @@ public class Space {
         Set<Force> appliedForces = new HashSet<>();
 
         // Add desired force
-        appliedForces.add(new Desired(body,container));
+ //       appliedForces.add(new Desired(body,container));
 
         // Check collisions against neighbours
         for(Body neighbour : grid.getNeighbours(body)) {
@@ -133,8 +133,6 @@ public class Space {
 
         // Integrate
         integrator.calculate(body, dt, appliedForce);
-
-        body.setPressure(appliedForce.getModule()/(2*body.getRadius()*Math.PI));
     }
 
     private void insertBodies(Integer quantity) {
