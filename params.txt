@@ -1,0 +1,11 @@
+diameter = 0.15
+width = 0.5
+height = 2
+friction = 0.1
+minradius = 0.01
+maxradius = 0.015
+n = 1000
+mass = 0.01
+kn = 1e5
+tf = 5
+dt_observer = 0.1
