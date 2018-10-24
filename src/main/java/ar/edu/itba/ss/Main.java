@@ -18,8 +18,8 @@ public class Main {
         Logger.log("Arguments parsed!");
 
         // Create observers
-        SpaceObserver observerOVITO = new OVITOObserver("ovito_out/ovito.xyz", N, 25.0);
-        SpaceObserver observerFlow = new FlowObserver("flow_out/flow.csv",  N, dt);
+        SpaceObserver observerOVITO = new OVITOObserver("ovito_out/ovitoV5.5.xyz", N, 25.0);
+        SpaceObserver observerFlow = new FlowObserver("flow_out/flowV5.5.csv",  N, dt);
         Logger.log("Observer created!");
 
         // Create space
