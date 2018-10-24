@@ -9,34 +9,27 @@ import java.io.IOException;
 import java.util.Set;
 
 public class OVITOObserver implements SpaceObserver {
+    private static int N;
     private BufferedWriter writer;
-    private Double totalTime;
-
     private Set<Body> bodies;
-    private Container container;
     private Double time;
 
     // Time variables
     private Double dt;
     private Double lastObservation = null;
 
-    private Long progress = null;
+    private Integer progress = 0;
 
-    public OVITOObserver(String filename, Double totalTime, Double FPS) throws IOException{
+    public OVITOObserver(String filename, int N, Double FPS) throws IOException{
         this.writer = new BufferedWriter(new FileWriter(filename));
-        this.totalTime = totalTime;
+        this.N = N;
         this.dt = 1.0/FPS;
         this.lastObservation = null;
     }
 
-    public void closeFile() throws IOException {
-        writer.close();
-    }
-
     @Override
-    public void injectData(Set<Body> bodies, Container container, Double time, Integer translatedParticles) {
+    public void injectData(Set<Body> bodies, Double time) {
         this.bodies = bodies;
-        this.container = container;
         this.time = time;
     }
 
@@ -50,16 +43,17 @@ public class OVITOObserver implements SpaceObserver {
                     writer.write(b + "\n");
                 }
             }
+            int aux = N-bodies.size();
+            if(progress < aux){
+                progress = aux;
+                System.out.println(progress+" particles out of "+N);
+            }
         }
     }
 
     @Override
     public Boolean simulationMustEnd() {
-        if(progress == null || progress != Math.round((time/totalTime) * 100)) {
-            progress = Math.round((time/totalTime) * 100);
-            System.out.println("Progress: " + progress + "%");
-        }
-        if(time >= totalTime) {
+        if(bodies.isEmpty()){
             return true;
         }
         return false;

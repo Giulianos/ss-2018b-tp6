@@ -11,10 +11,9 @@ public interface SpaceObserver {
      * Injects params into the observer,
      * so then they can be used by observe.
      * @param bodies
-     * @param container
      * @param time
      */
-    public void injectData(Set<Body> bodies, Container container, Double time, Integer translatedParticles);
+    public void injectData(Set<Body> bodies, Double time);
 
     /**
      * Observes the space using the data.

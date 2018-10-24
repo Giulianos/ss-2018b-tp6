@@ -25,9 +25,6 @@ public class Space {
     private Integrator integrator;
     private List<SpaceObserver> observers = new ArrayList<>();
 
-    // Space properties
-    private Integer translatedParticles = 0;
-
     // Concurrency
      ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
@@ -51,17 +48,15 @@ public class Space {
         observers.add(observer);
 
         // Inject initial data to observer
-        observer.injectData(bodies, container, elapsedTime, translatedParticles);
+        observer.injectData(bodies, elapsedTime);
     }
 
     public void simulationStep(Double dt) throws InterruptedException {
         Long startTime = System.currentTimeMillis();
 
-        translatedParticles = 0;
+        bodies = bodies.stream().filter(body ->  body.getPositionX() < container.getWidth()).collect(Collectors.toSet());
 
         List<Callable<Object>> tasks = new ArrayList<>(bodies.size());
-
-        bodies = bodies.stream().filter(body ->  body.getPositionX() < container.getWidth()).collect(Collectors.toSet());
 
         for(Body body : bodies) {
             tasks.add((() -> {
@@ -79,7 +74,7 @@ public class Space {
         this.elapsedTime += dt;
 
         for(SpaceObserver observer : observers) {
-            observer.injectData(bodies, container, elapsedTime, translatedParticles);
+            observer.injectData(bodies, elapsedTime);
         }
     }
 

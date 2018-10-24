@@ -1,6 +1,4 @@
 diameter = 1.2
 width = 20
 height = 20
-n = 50
-tf = 5
-dt_observer = 0.01
+n = 200

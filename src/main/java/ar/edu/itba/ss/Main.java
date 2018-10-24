@@ -1,6 +1,5 @@
 package ar.edu.itba.ss;
 
-import ar.edu.itba.ss.Observers.EnergyObserver;
 import ar.edu.itba.ss.Observers.FlowObserver;
 import ar.edu.itba.ss.Observers.OVITOObserver;
 import ar.edu.itba.ss.Observers.SpaceObserver;
@@ -10,7 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Main {
-    private static Double diameter, width, height, dt, tf, dtObserver;
+    private static Double diameter, width, height, dt;
     private static int N;
 
     public static void main( String[] args ) throws Exception {
@@ -19,9 +18,8 @@ public class Main {
         Logger.log("Arguments parsed!");
 
         // Create observers
-        SpaceObserver observerOVITO = new OVITOObserver("ovito_out/ovito.xyz", tf, 25.0);
-        SpaceObserver observerEnergy = new EnergyObserver("energy_out/energy.csv", tf, dtObserver);
-        SpaceObserver observerFlow = new FlowObserver("flow_out/flow.csv", tf, dtObserver);
+        SpaceObserver observerOVITO = new OVITOObserver("ovito_out/ovito.xyz", N, 25.0);
+        SpaceObserver observerFlow = new FlowObserver("flow_out/flow.csv",  N, dt);
         Logger.log("Observer created!");
 
         // Create space
@@ -30,7 +28,6 @@ public class Main {
 
         // Attach observer to space
         space.attachObserver(observerOVITO);
-        space.attachObserver(observerEnergy);
         space.attachObserver(observerFlow);
         Logger.log("Observers attached to space!");
 
@@ -39,7 +36,6 @@ public class Main {
         Logger.log("Simulator created!");
 
         // Add the rest of the observers
-        simulator.attachObserver(observerEnergy);
         simulator.attachObserver(observerFlow);
 
         // Simulate
@@ -54,7 +50,7 @@ public class Main {
         String myLine;
         int i = 0;
 
-        dt = 0.00001;
+        dt = 0.0001;
 
         while ( (myLine = bufRead.readLine()) != null)
         {
@@ -64,15 +60,13 @@ public class Main {
                 case "width" : width = Double.parseDouble(aux[1]); break;
                 case "height" : height = Double.parseDouble(aux[1]); break;
                 case "n" : N = Integer.parseInt(aux[1]); break;
-                case "dt_observer": dtObserver = Double.parseDouble(aux[1]); break;
-                case "tf" : tf = Double.parseDouble(aux[1]); break;
                 default:
                     throw new RuntimeException("NOT VALID INPUT IN PARAMS.TXT");
             }
             i++;
         }
 
-        if(i<6){
+        if(i<4){
             throw new RuntimeException("THERE ARE PARAMETERS MISSING");
         }
     }

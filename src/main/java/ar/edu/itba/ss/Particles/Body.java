@@ -105,7 +105,7 @@ public class Body{
     }
 
     public String toString(){
-        return currentPosition.getX() +"\t"+currentPosition.getY() + "\t" + this.getRadius() + "\t"+currentVelocity.getX() +"\t"+currentVelocity.getY();
+        return currentPosition.getX() +"\t"+currentPosition.getY() + "\t" + this.getRadius();
     }
 
     public Boolean isFixed() {

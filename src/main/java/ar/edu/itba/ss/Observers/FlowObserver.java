@@ -12,60 +12,44 @@ import java.util.Set;
  * Created by giulianoscaglioni on 15/10/18.
  */
 public class FlowObserver implements SpaceObserver {
+    private static Integer N;
     private BufferedWriter writer;
-    private Double totalTime;
 
     private Set<Body> bodies;
-    private Integer translatedParticles;
     private Double time;
-
-    // Window
-    private Integer currentTranslatedParticles = 0;
-    private Double elapsedTime = 0.0;
-    private static Integer particleWindow = 20;
 
     // Time variables
     private Double dt;
     private Double lastObservation;
 
-    private Long progress = null;
+    private Integer particlesLeft = null;
 
-    public FlowObserver(String filename, Double totalTime, Double dt) throws IOException {
+    public FlowObserver(String filename, int N, Double dt) throws IOException {
         this.writer = new BufferedWriter(new FileWriter(filename));
-        this.totalTime = totalTime;
+        this.N = N;
         this.dt = dt;
         this.lastObservation = null;
-    }
-
-    public void closeFile() throws IOException {
-        writer.close();
+        this.particlesLeft = N;
     }
 
     @Override
-    public void injectData(Set<Body> bodies, Container container, Double time, Integer translatedParticles) {
+    public void injectData(Set<Body> bodies,Double time) {
         this.bodies = bodies;
-        this.translatedParticles = translatedParticles;
         this.time = time;
     }
 
     @Override
     public void observe() throws IOException {
-        currentTranslatedParticles += translatedParticles;
-        elapsedTime += 0.00001;
-        if(currentTranslatedParticles > particleWindow) {
-            writer.write(time + "\t" + currentTranslatedParticles/elapsedTime+"\n");
-            currentTranslatedParticles = 0;
-            elapsedTime = 0.0;
-        }
+       int aux = bodies.size();
+       for(int i = aux; i < particlesLeft ; i++) {
+           writer.write(time + "\n");
+       }
+       particlesLeft = aux;
     }
 
     @Override
     public Boolean simulationMustEnd() {
-        if(progress == null || progress != Math.round((time/totalTime) * 100)) {
-            progress = Math.round((time/totalTime) * 100);
-            System.out.println("Progress: " + progress + "%");
-        }
-        if(time >= totalTime) {
+        if(bodies.isEmpty()){
             return true;
         }
         return false;
