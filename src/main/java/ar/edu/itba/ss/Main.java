@@ -9,21 +9,22 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Main {
-    private static Double diameter, width, height, dt;
+    private static Double diameter, width, height, dt, vDesired;
     private static int N;
 
     public static void main( String[] args ) throws Exception {
         // Parse arguments
-        parse("params.txt");
+        parse(args[0]);
+        Integer repetition = Integer.parseInt(args[1]);
         Logger.log("Arguments parsed!");
 
         // Create observers
-        SpaceObserver observerOVITO = new OVITOObserver("ovito_out/ovitoV5.5.xyz", N, 25.0);
-        SpaceObserver observerFlow = new FlowObserver("flow_out/flowV5.5.csv",  N, dt);
+        SpaceObserver observerOVITO = new OVITOObserver("ovito_out/ovito_out_"+vDesired+"."+repetition+".xyz", N, 25.0);
+        SpaceObserver observerFlow = new FlowObserver("flow_out/flowV"+vDesired+"."+repetition+".csv",  N, dt);
         Logger.log("Observer created!");
 
         // Create space
-        Space space = new Space(width, height, diameter, N);
+        Space space = new Space(width, height, diameter, N, vDesired);
         Logger.log("Space created!");
 
         // Attach observer to space
@@ -60,13 +61,14 @@ public class Main {
                 case "width" : width = Double.parseDouble(aux[1]); break;
                 case "height" : height = Double.parseDouble(aux[1]); break;
                 case "n" : N = Integer.parseInt(aux[1]); break;
+                case "vd" : vDesired = Double.parseDouble(aux[1]); break;
                 default:
                     throw new RuntimeException("NOT VALID INPUT IN PARAMS.TXT");
             }
             i++;
         }
 
-        if(i<4){
+        if(i<5){
             throw new RuntimeException("THERE ARE PARAMETERS MISSING");
         }
     }
