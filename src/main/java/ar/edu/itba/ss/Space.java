@@ -28,7 +28,7 @@ public class Space {
     // Concurrency
      ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-    public Space(Double width, Double height, Double diameter, Integer particleQuantity) {
+    public Space(Double width, Double height, Double diameter, Integer particleQuantity, Double vDesired) {
 
         // Create container
         this.container = new Box(diameter, height, width);
@@ -41,6 +41,9 @@ public class Space {
 
         // Create integrator
         this.integrator = new Beeman();
+
+        // Set desired speed
+        Desired.setvDesired(vDesired);
 
     }
 

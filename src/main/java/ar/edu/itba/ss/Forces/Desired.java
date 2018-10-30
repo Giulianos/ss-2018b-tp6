@@ -7,7 +7,7 @@ import ar.edu.itba.ss.Vector;
 public class Desired implements Force{
 
     private static Double t = 0.5;
-    private static Double vDesired = 5.5;
+    private static Double vDesired = 3.5;
     private static Container container;
 
     private Vector force;
@@ -29,6 +29,10 @@ public class Desired implements Force{
 
         // Calculate force
         force = en.multiplyBy(vDesired).subtract(b.getVelocity()).multiplyBy(b.getMass()).divideBy(t);
+    }
+
+    public static void setvDesired(Double vDesired) {
+        Desired.vDesired = vDesired;
     }
 
     @Override
