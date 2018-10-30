@@ -7,7 +7,7 @@ import ar.edu.itba.ss.Vector;
 public class Desired implements Force{
 
     private static Double t = 0.5;
-    private static Double vDesired = 5.5;
+    private static Double vDesired = 3.0;
     private static Container container;
 
     private Vector force;

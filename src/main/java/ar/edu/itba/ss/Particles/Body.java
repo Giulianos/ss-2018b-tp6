@@ -26,6 +26,7 @@ public class Body{
     private Double mass;
     private Double radius;
     private Integer id;
+    private Double pressure;
 
     public Body(Vector position, Vector velocity, Double mass, Double radius) {
 
@@ -41,6 +42,7 @@ public class Body{
         this.mass = mass;
         this.radius = radius;
         this.id = nextID++;
+        this.pressure = 0.0;
     }
 
 
@@ -74,6 +76,14 @@ public class Body{
         this.dtBetweenStates = dtBetweenStates;
     }
 
+    public Double getPressure() {
+        return pressure;
+    }
+
+    public void setPressure(Double pressure) {
+        this.pressure = pressure;
+    }
+
     // Other methods
     public void update() {
         if(this.futurePosition == null || this.futureVelocity == null || this.futureAcceleration == null) {
@@ -105,7 +115,7 @@ public class Body{
     }
 
     public String toString(){
-        return currentPosition.getX() +"\t"+currentPosition.getY() + "\t" + this.getRadius();
+        return currentPosition.getX() +"\t"+currentPosition.getY() + "\t" + this.getRadius() + "\t" + this.getPressure();
     }
 
     public Boolean isFixed() {

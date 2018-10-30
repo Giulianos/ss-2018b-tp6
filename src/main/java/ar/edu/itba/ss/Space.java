@@ -6,6 +6,7 @@ import ar.edu.itba.ss.Integrators.Beeman;
 import ar.edu.itba.ss.Integrators.Integrator;
 import ar.edu.itba.ss.Observers.SpaceObserver;
 import ar.edu.itba.ss.Particles.Body;
+import sun.nio.cs.ext.MacHebrew;
 
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -109,6 +110,9 @@ public class Space {
 
         // Sum forces
         Force appliedForce = new SumForce(appliedForces);
+
+        // Set pressure
+        body.setPressure(appliedForce.getForce().module()/(2* Math.PI * body.getRadius()));
 
         // Integrate
         integrator.calculate(body, dt, appliedForce);
