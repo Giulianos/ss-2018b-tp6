@@ -92,6 +92,9 @@ public class Space {
             return;
         }
 
+        // Reset pressure
+        body.resetPressure();
+
         Set<Force> appliedForces = new HashSet<>();
 
         // Add desired force
@@ -113,9 +116,6 @@ public class Space {
 
         // Sum forces
         Force appliedForce = new SumForce(appliedForces);
-
-        // Set pressure
-        body.setPressure(appliedForce.getForce().module()/(2* Math.PI * body.getRadius()));
 
         // Integrate
         integrator.calculate(body, dt, appliedForce);

@@ -80,8 +80,12 @@ public class Body{
         return pressure;
     }
 
-    public void setPressure(Double pressure) {
-        this.pressure = pressure;
+    public void addPressure(Double pressure) {
+        this.pressure += pressure;
+    }
+
+    public void resetPressure() {
+        this.pressure = 0d;
     }
 
     // Other methods

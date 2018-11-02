@@ -43,6 +43,9 @@ public class ParticlesInteraccion implements Force {
         force = en.multiplyBy(A*Math.exp(epsilon/B) + kn*(epsilon > 0? epsilon: 0)).add(
                 et.multiplyBy(vt*kt*(epsilon > 0? epsilon: 0)));
 
+        // Add pressure
+        b1.addPressure(force.module()/(2* Math.PI * b1.getRadius()));
+
     }
 
     @Override

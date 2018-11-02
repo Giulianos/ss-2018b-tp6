@@ -1,4 +1,5 @@
 diameter = 1.2
 width = 20
 height = 20
-n = 200
+n = 50
+vd = 3.0
